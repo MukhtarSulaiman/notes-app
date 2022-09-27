@@ -8,16 +8,6 @@ import Split from 'react-split';
 import { nanoid } from 'nanoid';
 
 export default function App() {
-	/**
-	 * Challenge:
-	 * 1. Every time the `notes` array changes, save it
-	 *    in localStorage. You'll need to use JSON.stringify()
-	 *    to turn the array into a string to save in localStorage.
-	 * 2. When the app first loads, initialize the notes state
-	 *    with the notes saved in localStorage. You'll need to
-	 *    use JSON.parse() to turn the stringified array back
-	 *    into a real JS array.
-	 */
 
 	const [notes, setNotes] = React.useState(
 		() => JSON.parse(localStorage.getItem('notes')) || []
@@ -40,13 +30,27 @@ export default function App() {
 	}
 
 	function updateNote(text) {
-		setNotes((oldNotes) =>
-			oldNotes.map((oldNote) => {
-				return oldNote.id === currentNoteId
-					? { ...oldNote, body: text }
-					: oldNote;
-			})
-		);
+		// This puts the the recent modified note to the top!
+		setNotes((oldNotes) => {
+			const arrayNotes = [];
+			for (let i = 0; i < oldNotes.length; i++) {
+				if (oldNotes[i].id === currentNoteId) {
+					arrayNotes.unshift({ ...oldNotes[i], body: text })
+				} else {
+					arrayNotes.push(oldNotes[i])
+				}
+			}
+			return arrayNotes
+		});
+
+		// This not reorganize the most recent modified note
+		// setNotes((oldNotes) =>
+		// 	oldNotes.map((oldNote) => {
+		// 		return oldNote.id === currentNoteId
+		// 			? { ...oldNote, body: text }
+		// 			: oldNote;
+		// 	})
+		// );
 	}
 
 	function findCurrentNote() {
